@@ -1,0 +1,1 @@
+az acr build . --registry serverlessdemo -t serverlessdemo.azurecr.io/uploadwebapp:dev
