@@ -20,7 +20,7 @@ az keyvault set-policy -n $storageKeyVaultName -g $storageResourceGroup  --objec
 
 # Configure for access to storage account
 $storageAccountKey = """@Microsoft.KeyVault(SecretUri=https://serverlessws-kv.vault.azure.net/secrets/storageaccountkey/92113b4fa5c74fb7807c3db44327fd62)"""
-az webapp config appsettings set -g $resourceGroup -n $webAppName --settings AzureStorageConfig__AccountName=serverlesst AzureStorageConfig__ImageContainer=images AzureStorageConfig__ThumbnailContainer=thumbnails AzureStorageConfig__AccountKey=$storageAccountKey
+az webapp config appsettings set -g $resourceGroup -n $webAppName --settings AzureStorageConfig__AccountName=serverlessst AzureStorageConfig__ImageContainer=images AzureStorageConfig__ThumbnailContainer=thumbnails AzureStorageConfig__AccountKey=$storageAccountKey
 
 
 # Setting credentials. Not needed for create, az CLI will retrieve them automatically.
