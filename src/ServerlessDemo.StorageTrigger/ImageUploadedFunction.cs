@@ -14,7 +14,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Serverless.StorageTrigger
 {
-    public static class ImageUploadedTrigger
+    public static class ImageUploadedFunction
     {
         [FunctionName("ProcessImage")]
         public static async Task Run(
