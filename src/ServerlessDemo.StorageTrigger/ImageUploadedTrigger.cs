@@ -43,6 +43,18 @@ namespace Serverless.StorageTrigger
             await analysisOut.AddAsync(new AnalysisResult(name, analysis));
         }
 
+        public static void ResizeImage(Stream input, Stream output, int outputWidth)
+        {
+            using (var image = Image.Load<Rgba32>(input, out var format))
+            {
+                var divisor = image.Width / outputWidth;
+                var height = Convert.ToInt32(Math.Round((decimal)(image.Height / divisor)));
+
+                image.Mutate(x => x.Resize(outputWidth, height));
+                image.Save(output, format);
+            }
+        }
+
         public static async Task<string> AnalyzeImage(Stream image)
         {
             var computerVisionEndpoint = System.Environment.GetEnvironmentVariable("VisionEndpoint", EnvironmentVariableTarget.Process);
@@ -60,18 +72,6 @@ namespace Serverless.StorageTrigger
                 response = await client.PostAsync(uri, content);
             }
             return await response.Content.ReadAsStringAsync();
-        }
-
-        public static void ResizeImage(Stream input, Stream output, int outputWidth)
-        {
-            using (var image = Image.Load<Rgba32>(input, out var format))
-            {
-                var divisor = image.Width / outputWidth;
-                var height = Convert.ToInt32(Math.Round((decimal)(image.Height / divisor)));
-
-                image.Mutate(x => x.Resize(outputWidth, height));
-                image.Save(output, format);
-            }
         }
 
         public class AnalysisResult {
