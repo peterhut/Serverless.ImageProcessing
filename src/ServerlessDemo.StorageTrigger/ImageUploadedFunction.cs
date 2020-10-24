@@ -32,7 +32,7 @@ namespace Serverless.StorageTrigger
             ILogger logger)
         {            
             logger.LogInformation($"Starting resize of {name}");
-            ResizeImage(image, thumbnailOut, 400);
+            ResizeImageToStream(image, thumbnailOut, 400);
 
             // Reset stream
             image.Position = 0;
@@ -43,7 +43,7 @@ namespace Serverless.StorageTrigger
             await analysisOut.AddAsync(new AnalysisResult(name, analysis));
         }
 
-        public static void ResizeImage(Stream input, Stream output, int outputWidth)
+        public static void ResizeImageToStream(Stream input, Stream output, int outputWidth)
         {
             using (var image = Image.Load<Rgba32>(input, out var format))
             {

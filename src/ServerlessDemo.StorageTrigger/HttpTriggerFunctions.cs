@@ -31,7 +31,7 @@ namespace CGI.Functions
         {
             log.LogInformation("GenerateQRCode recieved a request.");
 
-            var data = (string)req.Query["data"] ?? "https://www.cgi.com";
+            var data = (string)req.Query["data"] ?? "https://cgi.com";
             
             var generator = new QRCodeGenerator();
             var encoded = generator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q);
