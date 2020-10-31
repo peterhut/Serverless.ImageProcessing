@@ -14,7 +14,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Serverless.StorageTrigger
 {
-    public static class ImageUploadedTrigger
+    public static class ImageUploadedFunction
     {
         [FunctionName("ProcessImage")]
         public static async Task Run(
@@ -32,10 +32,7 @@ namespace Serverless.StorageTrigger
             ILogger logger)
         {            
             logger.LogInformation($"Starting resize of {name}");
-            using (Image<Rgba32> input = Image.Load<Rgba32>(image, out var format))
-            {
-                ResizeImage(input, thumbnailOut, format, 400);
-            }
+            ResizeImageToStream(image, thumbnailOut, 400);
 
             // Reset stream
             image.Position = 0;
@@ -44,6 +41,18 @@ namespace Serverless.StorageTrigger
             var analysis = await AnalyzeImage(image);
             logger.LogInformation("Analysis:" + analysis);
             await analysisOut.AddAsync(new AnalysisResult(name, analysis));
+        }
+
+        public static void ResizeImageToStream(Stream input, Stream output, int outputWidth)
+        {
+            using (var image = Image.Load<Rgba32>(input, out var format))
+            {
+                var divisor = image.Width / outputWidth;
+                var height = Convert.ToInt32(Math.Round((decimal)(image.Height / divisor)));
+
+                image.Mutate(x => x.Resize(outputWidth, height));
+                image.Save(output, format);
+            }
         }
 
         public static async Task<string> AnalyzeImage(Stream image)
@@ -63,15 +72,6 @@ namespace Serverless.StorageTrigger
                 response = await client.PostAsync(uri, content);
             }
             return await response.Content.ReadAsStringAsync();
-        }
-
-        public static void ResizeImage(Image<Rgba32> input, Stream output, IImageFormat format, int outputWidth)
-        {     
-            var divisor = input.Width / outputWidth;
-            var height = Convert.ToInt32(Math.Round((decimal)(input.Height / divisor)));
-
-            input.Mutate(x => x.Resize(outputWidth, height));
-            input.Save(output, format);
         }
 
         public class AnalysisResult {
